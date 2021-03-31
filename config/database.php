@@ -64,13 +64,25 @@ return [
         ],
 
         'pgsql' => [
+            'read' => [
+                'host' => [
+                    env('DB_SLAVE_HOST', env('DB_HOST')),
+                ],
+                'username' => env('DB_SLAVE_USERNAME', env('DB_USERNAME')),
+                'password' => env('DB_SLAVE_PASSWORD', env('DB_PASSWORD')),
+            ],
+            'write' => [
+                'host' => [
+                    env('DB_MASTER_HOST', env('DB_HOST')),
+                ],
+                'username' => env('DB_MASTER_USERNAME', env('DB_USERNAME')),
+                'password' => env('DB_MASTER_PASSWORD', env('DB_PASSWORD')),
+            ],
+            'sticky' => true,
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,

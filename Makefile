@@ -43,7 +43,7 @@ ENVIRONMENT=$(env)
 #Docker Image Version
 PHP_TAG=phpdockerio/php73-fpm:latest
 HTTPD_TAG=nginx:1.19.6-alpine
-DB_TAG=postgres:11.5
+DB_TAG=bitnami/postgresql:11-debian-10
 
 # Wokdir
 WORK_DIR=/var/www/

@@ -27,23 +27,42 @@ services:
     ports:
       - "80:80"
     links:
-      - db
+      - dbmaster
+      - dbslave
       - redis
     container_name: boilerplate-proxy-php-cont
-  db:
+  dbmaster:
     image: boilerplate/db-local:latest
     restart: always
     ports:
         - "5432:5432" # host:container
     volumes:
-      - data-vol:/var/lib/postgresql/data
+      - data-vol:/bitnami/postgresql
+      - ./database/slave-entrypoint.sh:/docker-entrypoint-initdb.d/slave-entrypoint.sh
     environment:
-      POSTGRES_DB: forge
-      POSTGRES_USER: forge
-      POSTGRES_PASSWORD: forge
-      TZ: Asia/Tokyo
-      PG_DATA: /var/lib/postgresql/data/pgdata
-    container_name: boilerplate-db-cont
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=repl_password
+      - POSTGRESQL_USERNAME=master
+      - POSTGRESQL_PASSWORD=master
+      - POSTGRESQL_DATABASE=forge
+      - ALLOW_EMPTY_PASSWORD=yes
+    container_name: boilerplate-master-db-cont
+  dbslave:
+    image: boilerplate/db-local:latest
+    restart: always
+    ports:
+        - "5433:5432" # rep:container
+    depends_on:
+      - dbmaster
+    environment:
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=repl_user
+      - POSTGRESQL_REPLICATION_PASSWORD=repl_password
+      - POSTGRESQL_MASTER_HOST=dbmaster
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - ALLOW_EMPTY_PASSWORD=yes
+    container_name: boilerplate-slave-db-cont
   redis:
     image: "redis:alpine"
     ports:

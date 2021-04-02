@@ -44,6 +44,10 @@ class ModulesServiceProvider extends ServiceProvider
         if (File::exists($modulePath . "routes.php")) {
             $this->loadRoutesFrom($modulePath . "routes.php");
         }
+        // boot views
+        if (File::exists($modulePath . "Views")) {
+            $this->loadViewsFrom($modulePath . "Views", $moduleName);
+        }
     }
 
     /**
@@ -54,5 +58,6 @@ class ModulesServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register('Modules\Users\UserServiceProvider');
+        $this->app->register('Modules\ElasticSearch\BookServiceProvider');
     }
 }

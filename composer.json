@@ -14,7 +14,8 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
         "laravel/framework": "^7.29",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "predis/predis": "^1.1"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
@@ -38,10 +39,10 @@
             "Core\\": "core/",
             "Modules\\": "modules/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeds\\": "database/seeds/"
         },
         "classmap": [
-            "database/seeders",
+            "database/seeds",
             "database/factories"
         ]
     },

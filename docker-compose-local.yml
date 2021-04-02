@@ -6,6 +6,11 @@ volumes:
       driver: local
     npm_dependencies: # Volume to cache node_modules locally.
       driver: local
+    elasticsearch:
+      driver: local
+networks:
+    elk:
+      driver: bridge
 services:
   proxy-app:
     build:
@@ -25,16 +30,19 @@ services:
       - php_dependencies:/var/www/vendor
       - npm_dependencies:/var/www/node_modules
     ports:
-      - "80:80"
+      - "8080:80"
     links:
       - db
       - redis
+      - elasticsearch
     container_name: boilerplate-proxy-php-cont
+    networks:
+      - elk
   db:
     image: boilerplate/db-local:latest
     restart: always
     ports:
-        - "5432:5432" # host:container
+        - "5433:5432" # host:container
     volumes:
       - data-vol:/var/lib/postgresql/data
     environment:
@@ -44,12 +52,80 @@ services:
       TZ: Asia/Tokyo
       PG_DATA: /var/lib/postgresql/data/pgdata
     container_name: boilerplate-db-cont
+    networks:
+      - elk
   redis:
     image: "redis:alpine"
     ports:
-     - "6379:6379"
+     - "63799:6379"
     volumes:
      - $PWD/redis-data:/var/lib/redis
     environment:
      - REDIS_REPLICATION_MODE=master
     container_name: boilerplate-cache-cont
+    networks:
+      - elk
+  elasticsearch:
+    build:
+      context: elk/elasticsearch/
+      args:
+        ELK_VERSION: 7.11.1
+    volumes:
+      - type: bind
+        source: ./elk/elasticsearch/config/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - type: volume
+        source: elasticsearch
+        target: /usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTIC_PASSWORD: changeme
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks
+      # see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      discovery.type: single-node
+    networks:
+      - elk
+  logstash:
+    build:
+      context: elk/logstash/
+      args:
+        ELK_VERSION: 7.11.1
+    volumes:
+      - type: bind
+        source: ./elk/logstash/config/logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+        read_only: true
+      - type: bind
+        source: ./elk/logstash/pipeline
+        target: /usr/share/logstash/pipeline
+        read_only: true
+    ports:
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+  kibana:
+    build:
+      context: elk/kibana/
+      args:
+        ELK_VERSION: 7.11.1
+    volumes:
+      - type: bind
+        source: ./elk/kibana/config/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch

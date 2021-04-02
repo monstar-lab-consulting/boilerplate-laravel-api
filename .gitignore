@@ -8,3 +8,4 @@
 .phpunit.result.cache
 docker-compose.override.yml
 npm-debug.log
+/storage/worker/*.log

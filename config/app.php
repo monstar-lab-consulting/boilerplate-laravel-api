@@ -175,6 +175,7 @@ return [
         Core\Providers\EventServiceProvider::class,
         Core\Providers\RouteServiceProvider::class,
         Modules\ModulesServiceProvider::class,
+        Elasticquent\ElasticquentServiceProvider::class,
 
     ],
 

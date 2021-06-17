@@ -174,6 +174,7 @@ return [
         // Core\Providers\BroadcastServiceProvider::class,
         Core\Providers\EventServiceProvider::class,
         Core\Providers\RouteServiceProvider::class,
+        Core\Providers\TelescopeServiceProvider::class,
         Modules\ModulesServiceProvider::class,
 
     ],

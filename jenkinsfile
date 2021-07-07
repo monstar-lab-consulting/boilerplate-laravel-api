@@ -17,8 +17,9 @@ pipeline {
                 expression { CHANGE_TARGET ==~ /init/ }
             }
             steps {
-                // slackSend color: "#439FE0", message: "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER}, refers at: ${env.BUILD_URL}"
+                slackSend color: "#439FE0", channel: "C027PSFDXHN", message: "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER}, refers at: ${env.BUILD_URL}"
                 script {
+                    localDeploy=true
                     sh "sudo make kubeinit env=local"
                 }
             }
@@ -28,8 +29,9 @@ pipeline {
                 expression { CHANGE_TARGET ==~ /down/ }
             }
             steps {
-                // slackSend color: "#439FE0", message: "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER}, refers at: ${env.BUILD_URL}"
+                slackSend color: "#439FE0", channel: "C027PSFDXHN", message: "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER}, refers at: ${env.BUILD_URL}"
                 script {
+                    localDeploy=true
                     sh "sudo make kubedown env=local"
                 }
             }
@@ -39,31 +41,32 @@ pipeline {
                 expression { CHANGE_TARGET ==~ /local_deploy/ }
             }
             steps {
-                // slackSend color: "#439FE0", message: "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER}, refers at: ${env.BUILD_URL}"
+                slackSend color: "#439FE0", channel: "C027PSFDXHN", message: "Build Started: ${env.JOB_NAME} ${env.BUILD_NUMBER}, refers at: ${env.BUILD_URL}"
                 script {
+                    localDeploy=true
                     sh "sudo make kubeupdate env=local"
                 }
             }
         }
     }
-    // post {
-    //     success {
-    //         script {
-    //             if (localDeploy) {
-    //                 slackSend color: "#44F059",
-    //                         channel: '{channel_name}',
-    //                         message: "Deployment successfully, please refers functions was deployed at: ${env.CHANGE_URL}"
-    //             }
-    //         }
-    //     }
-    //     failure {
-    //         script {
-    //             if (localDeploy) {
-    //                 slackSend color: "#F72911",
-    //                         channel: '{channel_name}', 
-    //                         message: "Deployment failed, refers logs at: ${env.BUILD_URL}/console"
-    //             }
-    //         }
-    //     }
-    // }
+    post {
+        success {
+            script {
+                if (localDeploy) {
+                    slackSend color: "#44F059",
+                            channel: 'C027PSFDXHN',
+                            message: "Deployment successfully, please refers functions was deployed at: ${env.CHANGE_URL}"
+                }
+            }
+        }
+        failure {
+            script {
+                if (localDeploy) {
+                    slackSend color: "#F72911",
+                            channel: 'C027PSFDXHN', 
+                            message: "Deployment failed, refers logs at: ${env.BUILD_URL}/console"
+                }
+            }
+        }
+    }
 }

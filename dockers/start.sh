@@ -5,8 +5,8 @@ composer install --no-interaction
 composer dump-autoload --optimize
 php artisan migrate --force
 php artisan route:cache
-service php7.3-fpm stop
+service php8.0-fpm stop
 service supervisor start
 chmod -R 777 storage/
-nginx
-/usr/sbin/php-fpm7.3 -O
+/usr/sbin/nginx
+/usr/sbin/php-fpm8.0 -O

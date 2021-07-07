@@ -46,7 +46,7 @@ endif
 #Docker Image Version
 # php 8.0, nginx 1.19.7
 #Docker Image Version
-PHP_TAG=phpdockerio/php73-fpm:latest
+PHP_TAG=phpdockerio/php80-fpm:latest
 HTTPD_TAG=nginx:1.19.7-alpine
 DB_TAG=mysql:8.0.24
 

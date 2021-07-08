@@ -15,6 +15,13 @@ spec:
       containers:
       - name: boilerplate-proxy-php-cont
         image: 172.16.110.67:5000/boilerplate-app:latest
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
         imagePullPolicy: Always
         ports:
           - containerPort: 80
@@ -23,9 +30,6 @@ spec:
         envFrom:
         - secretRef:
             name: boilerplate-secrets
-        # volumeMounts:
-        # - name: boilerplate-source
-        #   mountPath: /var/www
 
       - name: boilerplate-db-cont
         image: 172.16.110.67:5000/boilerplate-db
@@ -45,6 +49,7 @@ spec:
         volumeMounts:
         - name: boilerplate-db-storage
           mountPath: /var/lib/mysql
+
       - name: boilerplate-cache-cont
         image: redis:alpine
         env:
@@ -52,10 +57,8 @@ spec:
           value: "master"
         ports:
         - containerPort: 6379
+
       volumes:
       - name: boilerplate-db-storage
         persistentVolumeClaim:
           claimName: boilerplate-pv-claim
-      # - name: boilerplate-source
-      #   hostPath:
-      #     path: /Users/mbp0041/projects/boilerplate-laravel-api

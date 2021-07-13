@@ -1,4 +1,3 @@
-# For use on docker for mac
 kind: StorageClass
 apiVersion: storage.k8s.io/v1beta1
 metadata:

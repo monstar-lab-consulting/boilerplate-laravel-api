@@ -21,6 +21,6 @@
         </style>
     </head>
     <body class="antialiased">
-        Laravel Autodeployment
+        Laravel Autodeployment v1.0
     </body>
 </html>
